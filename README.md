@@ -7,7 +7,7 @@ The command only supports simple dice notations like 2d6+1 or 3d8-2.
 
 Follow these steps to configure the slash command in Slack:
 
-  1. Navigate to https://<your-team-domain>.slack.com/services/new
+  1. Navigate to `https://<your-team-domain>.slack.com/services/new`
 
   2. Search for and select "Slash Commands".
 
