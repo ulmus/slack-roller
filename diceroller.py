@@ -19,22 +19,23 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 def lambda_handler(event, context):
-    req_body = event['body']
-    params = parse_qs(req_body)
-    token = params['token'][0]
-    if token != expected_token:
-        logger.error("Request token (%s) does not match exptected", token)
-        raise Exception("Invalid request token")
+	req_body = event['body']
+	params = parse_qs(req_body)
+	token = params['token'][0]
+	if token != expected_token:
+		logger.error("Request token (%s) does not match exptected", token)
+		raise Exception("Invalid request token")
 
-    try:
-        user = params['user_name'][0]
-        command = params['command'][0]
-        channel = params['channel_name'][0]
-        command_text = params['text'][0]
-    except (KeyError, IndexError):
-        return "No dice roller notation provided, use '/roll 2d6+1' or similar syntax"
-    
-	return roll_dice_notation_and_return_response(user, command_text)
+	try:
+		user = params['user_name'][0]
+		command = params['command'][0]
+		channel = params['channel_name'][0]
+		command_text = params['text'][0]
+	except (KeyError, IndexError):
+		return "No dice roller notation provided, use '/roll 2d6+1' or similar syntax"
+
+	response = roll_dice_notation_and_return_response(user, command_text)
+	return response
 
 dice_pattern = re.compile("^(\\d+)([dD])(\\d+)(([-+*/])(\\d+))*$")
 
@@ -73,31 +74,34 @@ def roll_dice(num_dice, die_type):
 
 def generate_dice_roll_response(user, dice_notation, dice_num, dice_type, modifier, rolled_dice ):
 	return {
-        "response_type": "in_channel",
-        "text": "%s is rolling %s" % (user, dice_notation),
-        "attachments": [
+		"response_type": "in_channel",
+		"text": "%s is rolling %s" % (user, dice_notation),
+		"attachments": [
 			{
-				"title" : "Result",
+				"mrkdwn_in" : ["fields",],
 				"fields" : [
 					{
 						"title": "Dice rolls",
-						"value": format_dice(rolled_dice, dice_type)
+						"value": format_dice(rolled_dice, dice_type),
 					},
 					{
 						"title": "Sum",
-						"value": unicode(get_sum(rolled_dice, modifier))
+						"value": unicode(get_sum(rolled_dice, modifier)),
 					}
 				]
 			}
-        ]
-    }
+		]
+	}
 	
+
 def get_sum(rolled_dice, modifier):
 	return sum(rolled_dice) + modifier
 	
+
 def format_dice(rolled_dice, die_type):
 	return u", ".join([format_die(die, die_type) for die in rolled_dice])
 	
+
 def format_die(die_result, die_type):
 	die_text = unicode(die_result)
 	if die_result == 1:
@@ -105,6 +109,7 @@ def format_die(die_result, die_type):
 	if die_result == die_type:
 		die_text = "*%s*" % die_text 
 	return die_text
+
 
 def roll_dice_notation_and_return_response(user, dice_notation):
 	try:
@@ -121,4 +126,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+	main()
