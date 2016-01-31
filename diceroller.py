@@ -1,3 +1,5 @@
+ENCRYPTED_EXPECTED_TOKEN = "" # Insert encrypted token here
+
 from base64 import b64decode
 from urlparse import parse_qs
 import logging
@@ -5,8 +7,6 @@ import json
 import re
 import random
 import sys
-
-ENCRYPTED_EXPECTED_TOKEN = "" # Insert encrypted token here
 
 try:
 	import boto3
@@ -77,6 +77,7 @@ def generate_dice_roll_response(user, dice_notation, dice_num, dice_type, modifi
         "text": "%s is rolling %s" % (user, dice_notation),
         "attachments": [
 			{
+				"title" : "Result",
 				"fields" : [
 					{
 						"title": "Dice rolls",
@@ -95,7 +96,7 @@ def get_sum(rolled_dice, modifier):
 	return sum(rolled_dice) + modifier
 	
 def format_dice(rolled_dice, die_type):
-	return u", ".join([format_die(die, die_type) for die in rolled_dice]),
+	return u", ".join([format_die(die, die_type) for die in rolled_dice])
 	
 def format_die(die_result, die_type):
 	die_text = unicode(die_result)
@@ -111,15 +112,12 @@ def roll_dice_notation_and_return_response(user, dice_notation):
 	except DiceRollerException as e:
 		return unicode(e)
 	rolled_dice = roll_dice(parsed_dice[0], parsed_dice[1])
-	return generate_dice_roll_response(user, dice_notation, parsed_dice[0], parsed_dice[1], parsed_dice[2], rolled_dice)
+	return generate_dice_roll_response(user=user, dice_notation=dice_notation, dice_num=parsed_dice[0], dice_type=parsed_dice[1], modifier=parsed_dice[2], rolled_dice=rolled_dice)
 	
 	
 def main():
 	dice_notation_entered = sys.argv[1]
-	parsed_dice = parse_dice_notation(dice_notation_entered)
-	rolled_dice = roll_dice(parsed_dice[0], parsed_dice[1])
-	print rolled_dice
-	print generate_dice_roll_response(user = "System", dice_notation= dice_notation_entered, dice_num=parsed_dice[0], dice_type=parsed_dice[1], modifier=parsed_dice[2], rolled_dice=rolled_dice)
+	print roll_dice_notation_and_return_response(user = "System", dice_notation= dice_notation_entered)
 
 
 if __name__ == "__main__":
