@@ -56,7 +56,7 @@ Follow these steps to complete the configuration of your command API endpoint
      API Gateway console.
 
   3. Add a mapping template for the `x-www-form-urlencoded` content type with the
-     following body: { "body": $input.json("$") }
+     following body: `{ "body": $input.json("$") }`
 
   4. Deploy the API to the prod stage.
 
