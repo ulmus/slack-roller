@@ -81,12 +81,12 @@ def generate_dice_roll_response(user, dice_notation, dice_num, dice_type, modifi
 				"mrkdwn_in" : ["fields",],
 				"fields" : [
 					{
-						"title": "Dice rolls",
-						"value": format_dice(rolled_dice, dice_type),
+						"title": "Result",
+						"value": unicode(get_sum(rolled_dice, modifier)),
 					},
 					{
-						"title": "Sum",
-						"value": unicode(get_sum(rolled_dice, modifier)),
+						"title": "Dice",
+						"value": format_dice(rolled_dice, dice_type),
 					}
 				]
 			}
